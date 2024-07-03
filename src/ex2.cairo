@@ -1,7 +1,16 @@
+use starknet::ClassHash;
+
+#[starknet::interface]
+trait IUpgradableCallback<TContractState> {
+    fn after_upgrade(ref self: TContractState, new_implementation: ClassHash, data: Span<felt252>);
+}
+
 #[starknet::contract]
 mod Upgrade {
     use core::result::ResultTrait;
     use starknet::ClassHash;
+    use super::{IUpgradableCallbackLibraryDispatcher, IUpgradableCallbackDispatcherTrait};
+
     #[storage]
     struct Storage {}
     #[event]
@@ -17,11 +26,12 @@ mod Upgrade {
     fn constructor(ref self: ContractState) {}
 
     // No more proxy, it is just built-in
-    fn upgrade(to: ClassHash) {
-        // Do some access control
+    fn upgrade(new_implementation: ClassHash, data: Array<felt252>) {
+        // Access control
         // pre-checks
-        starknet::syscalls::replace_class_syscall(to).unwrap();
+        starknet::syscalls::replace_class_syscall(new_implementation).unwrap();
         // Do some post-checks
-        ()
+        IUpgradableCallbackLibraryDispatcher { class_hash: new_implementation }
+            .after_upgrade(new_implementation, data.span());
     }
 }

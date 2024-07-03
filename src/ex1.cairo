@@ -63,5 +63,5 @@ mod Calling {
     ) -> u256 {
         dispatcher.balance_of(account)
     }
-// Dispatcher vs LibraryDispatcher
+// Dispatcher vs LibraryDispatcher vs SafeDispatcher
 }

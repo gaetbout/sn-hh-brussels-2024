@@ -9,7 +9,10 @@ pub trait IWriteToAnySlots<TContractState> {
 #[starknet::contract]
 pub mod WriteToAnySlot {
     use starknet::syscalls::{storage_read_syscall, storage_write_syscall};
-    use starknet::storage_access::{storage_base_address_from_felt252, storage_address_from_base};
+    use starknet::storage_access::{
+        storage_base_address_from_felt252, storage_address_from_base,
+        storage_address_from_base_and_offset
+    };
     use starknet::SyscallResultTrait;
 
     #[storage]
@@ -19,7 +22,7 @@ pub mod WriteToAnySlot {
     impl WriteToAnySlot of super::IWriteToAnySlots<ContractState> {
         fn write_slot(ref self: ContractState, value: u32) {
             let base = storage_base_address_from_felt252(selector!("test_slot"));
-            let storage_address = storage_address_from_base(base);
+            let storage_address = storage_address_from_base_and_offset(base, 4);
             storage_write_syscall(0, storage_address, value.into()).unwrap_syscall();
         }
 

@@ -6,21 +6,21 @@ pub struct Pet {
     pub name: felt252,
     pub age: u8,
     pub owner: felt252,
-// pub species: Span<felt252>
+    pub species: Span<felt252>
 }
 
 use core::hash::{HashStateTrait, Hash};
 
-// impl HashFelt252<S, +Drop<S>, +HashStateTrait<S>> of Hash<Span<felt252>, S> {
-//     fn update_state(state: S, value: Span<felt252>) -> S {
-//         let mut value = value;
-//         let mut state = state.update(value.len().into());
-//         while let Option::Some(item) = value.pop_front() {
-//             state = state.update(*item);
-//         };
-//         state
-//     }
-// }
+impl HashFelt252<S, +Drop<S>, +HashStateTrait<S>> of Hash<Span<felt252>, S> {
+    fn update_state(state: S, value: Span<felt252>) -> S {
+        let mut value = value;
+        let mut state = state.update(value.len().into());
+        while let Option::Some(item) = value.pop_front() {
+            state = state.update(*item);
+        };
+        state
+    }
+}
 
 #[starknet::interface]
 pub trait IPetRegistry<TContractState> {
